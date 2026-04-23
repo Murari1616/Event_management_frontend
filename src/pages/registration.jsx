@@ -96,7 +96,6 @@ export default function EventRegistration() {
           <img src={AOP} className="w-full h-full object-cover opacity-70" />
           <button
             onClick={() => {
-              console.log("HIHI");
               setShowAdminModal(true);
             }}
             className="absolute top-3 right-3 bg-black/60 p-2 rounded-full hover:bg-black z-50"
@@ -131,6 +130,12 @@ export default function EventRegistration() {
               <p className="text-blue-400">📅 April 25, 2026</p>
               <p className="text-purple-400">🕡 6:30 PM onwards</p>
               <p className="text-red-400">📍The Grind Cafe, Banjara Hills</p>
+
+              {/* ✅ NEW */}
+              <p className="text-orange-400">
+                🏏 Live IPL Screening Experience
+              </p>
+              <p className="text-cyan-400">🤝 Strangers Meet</p>
             </div>
 
             <p className="text-purple-400 text-xs">
@@ -213,18 +218,31 @@ export default function EventRegistration() {
             </div>
 
             {/* Terms */}
-            <button
+            {/* ⚠️ Terms Notice */}
+            <div className="bg-yellow-500/10 border border-yellow-500 text-yellow-300 p-3 rounded-lg text-xs">
+              ⚠️ Please read the{" "}
+              <span
+                className="underline cursor-pointer text-yellow-200 font-semibold"
+                onClick={() => setShowModal(true)}
+              >
+                Terms & Conditions
+              </span>{" "}
+              carefully before proceeding. You will only be able to agree after
+              reading them.
+            </div>
+
+            {/* Terms Button */}
+            {/* <button
               type="button"
               onClick={() => setShowModal(true)}
               className="text-purple-400 underline text-sm"
             >
               Read Terms & Conditions
-            </button>
+            </button> */}
 
             <div className="flex items-center gap-3">
               <Checkbox.Root
                 checked={agree}
-                disabled={!termsRead}
                 onCheckedChange={(val) => setValue("agree", !!val)}
                 className="w-5 h-5 border rounded data-[state=checked]:bg-purple-600"
               >
