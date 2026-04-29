@@ -52,7 +52,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/payment",
+    path: "/success",
     element: (
       <Suspense fallback={<Loader />}>
         <PaymentScreen />
