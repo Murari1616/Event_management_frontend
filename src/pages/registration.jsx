@@ -94,10 +94,10 @@ export default function EventRegistration() {
       <div className="min-h-screen bg-black flex items-center justify-center text-white text-center">
         <div>
           <h1 className="text-4xl font-bold text-purple-400">
-            Event is Officially Closed
+            Registration are Opening Soon
           </h1>
           <p className="text-gray-400 text-xl">
-            Tickets are sold out. Thank you for your interest 🙏
+            Thank you for your interest 🙏
           </p>
         </div>
       </div>
