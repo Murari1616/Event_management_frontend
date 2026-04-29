@@ -8,16 +8,21 @@ import AOP from "../assets/images/AOP.jpeg";
 import { BASE_URL, testURL } from "@/appConstants";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import QR from "../assets/images/payment.jpeg";
 
 const schema = z.object({
   name: z.string().min(2),
   age: z.coerce.number().min(1),
   gender: z.enum(["King", "Queen"]),
   phoneNumber: z.string().min(10),
+  instaId: z.string().min(2, "Instagram ID is required"),
   place: z.string().min(2),
   talent: z.string().min(2),
   description: z.string().optional(),
   agree: z.boolean().refine((v) => v === true),
+  paid: z.boolean().refine((v) => v === true, {
+    message: "Please complete payment first",
+  }),
 });
 
 export default function EventRegistration() {
@@ -27,7 +32,7 @@ export default function EventRegistration() {
   const [adminCode, setAdminCode] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [termsRead, setTermsRead] = useState(false);
-  const isClosed= true;
+  const isClosed = false;
 
   const {
     register,
@@ -38,6 +43,7 @@ export default function EventRegistration() {
   } = useForm({ resolver: zodResolver(schema) });
 
   const agree = watch("agree");
+  const paid = watch("paid");
   const SECRET_CODE = "4110";
 
   const handleVerify = () => {
@@ -55,7 +61,8 @@ export default function EventRegistration() {
 
   const selectedGender = watch("gender");
   const onSubmit = async (data) => {
-    const { agree, ...payload } = data;
+    const { agree, paid, ...payload } = data;
+    console.log("object", payload);
     try {
       const res = await fetch(`${BASE_URL}guest/create`, {
         method: "POST",
@@ -68,7 +75,7 @@ export default function EventRegistration() {
         description: "Registration Successfully",
         variant: "success",
       });
-      navigate("/payment");
+      navigate("/success");
     } catch {
       toast({
         title: "Error",
@@ -88,16 +95,15 @@ export default function EventRegistration() {
   useEffect(() => {
     wake();
   });
-
-   if (isClosed) {
+  if (isClosed) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center text-white text-center">
         <div>
           <h1 className="text-4xl font-bold text-purple-400">
-            Registration are Opening Soon
+            Event is Officially Closed
           </h1>
           <p className="text-gray-400 text-xl">
-            Thank you for your interest 🙏
+            Tickets are sold out. Thank you for your interest 🙏
           </p>
         </div>
       </div>
@@ -140,23 +146,35 @@ export default function EventRegistration() {
             </p>
 
             <div className="grid grid-cols-2 gap-3 text-sm">
-              <p className="text-green-400">💰 Price: ₹1199</p>
-              <p className="text-yellow-300">🍽️ ₹500 Redeemable Food</p>
+              <p className="text-green-400">💰 Price: ₹899</p>
+              {/* <p className="text-yellow-300">🍽️ ₹500 Redeemable Food</p> */}
               <p className="text-pink-400">🎁 Surprise Gift Included</p>
-              <p className="text-blue-400">📅 April 25, 2026</p>
-              <p className="text-purple-400">🕡 6:30 PM onwards</p>
-              <p className="text-red-400">📍The Grind Cafe, Banjara Hills</p>
+              <p className="text-blue-400">📅 May 2, 2026</p>
+              <p className="text-purple-400">🕡 5:30 PM onwards</p>
+              <a
+                href="https://maps.app.goo.gl/dsXE2q2Vgau3vrHfA"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[12px] text-red-400 underline"
+              >
+                📍The Game Room Cafe, Gachibowli
+              </a>
 
               {/* ✅ NEW */}
-              <p className="text-orange-400">
-                🏏 Live IPL Screening Experience
-              </p>
+              <p className="text-orange-400">🎮 Gaming</p>
               <p className="text-cyan-400">🤝 Strangers Meet</p>
+              <a
+                href="https://www.instagram.com/anaganaga.oka.parichayam?igsh=MWc1cnNneWFteWY5OA=="
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-purple-400 text-xs flex flex-row gap-2"
+              >
+                Follow{" "}
+                <p className="text-purple-400 underline">
+                  @anaganaga.oka.parichayam
+                </p>
+              </a>
             </div>
-
-            <p className="text-purple-400 text-xs">
-              Follow @anaganaga.oka.parichayam
-            </p>
           </div>
 
           {/* 🧾 Form */}
@@ -210,6 +228,14 @@ export default function EventRegistration() {
               <input {...register("phoneNumber")} className="input-dark" />
             </div>
 
+            <div>
+              <label className="label">Your Instagram ID? 📸</label>
+              <input {...register("instaId")} className="input-dark" />
+              {errors.instaId && (
+                <p className="error">{errors.instaId.message}</p>
+              )}
+            </div>
+
             {/* Place */}
             <div>
               <label className="label">
@@ -233,6 +259,57 @@ export default function EventRegistration() {
               />
             </div>
 
+            <div className="border border-purple-700 rounded-xl p-4 text-center space-y-4 bg-black">
+              <h2 className="text-lg font-semibold text-purple-400">
+                Complete Payment First 💫
+              </h2>
+
+              {/* 💰 Price */}
+              <p className="text-2xl font-bold text-green-400">₹899</p>
+
+              <div className="flex justify-center">
+                <img
+                  src={QR}
+                  alt="payment-qr"
+                  className="w-56 h-56 object-contain rounded-lg border border-gray-700"
+                />
+              </div>
+
+              <p className="text-sm text-gray-300">
+                <span className="text-purple-400 font-semibold">
+                  Payment Name:
+                </span>{" "}
+                Devarakonda Sri Laxmi Durga
+              </p>
+
+              <a
+                href="https://wa.me/917382510118"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-green-400 font-semibold underline mt-2"
+              >
+                📱 Send your payment screenshot on WhatsApp to 7382510118
+              </a>
+
+              <p className="text-xs text-yellow-300">
+                ⚠️ Complete payment before submitting the form
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <Checkbox.Root
+                checked={watch("paid")}
+                onCheckedChange={(val) => setValue("paid", !!val)}
+                className="w-5 h-5 border rounded data-[state=checked]:bg-green-600"
+              >
+                <Checkbox.Indicator>
+                  <CheckIcon className="text-white w-4 h-4" />
+                </Checkbox.Indicator>
+              </Checkbox.Root>
+
+              <span className="text-sm text-green-400">
+                I have completed the payment
+              </span>
+            </div>
             {/* Terms */}
             {/* ⚠️ Terms Notice */}
             <div className="bg-yellow-500/10 border border-yellow-500 text-yellow-300 p-3 rounded-lg text-xs">
@@ -246,15 +323,6 @@ export default function EventRegistration() {
               carefully before proceeding. You will only be able to agree after
               reading them.
             </div>
-
-            {/* Terms Button */}
-            {/* <button
-              type="button"
-              onClick={() => setShowModal(true)}
-              className="text-purple-400 underline text-sm"
-            >
-              Read Terms & Conditions
-            </button> */}
 
             <div className="flex items-center gap-3">
               <Checkbox.Root
@@ -272,7 +340,7 @@ export default function EventRegistration() {
 
             {/* Submit */}
             <button
-              disabled={!agree || isSubmitting}
+              disabled={!agree || !paid || isSubmitting}
               className="w-full py-3 rounded-lg bg-gradient-to-r from-purple-600 to-pink-500 font-semibold disabled:opacity-50"
             >
               {isSubmitting ? "Entering..." : "Reserve Your Spot"}
@@ -290,15 +358,15 @@ export default function EventRegistration() {
             <p className="text-gray-300 whitespace-pre-line">
               {`Guest contribution is mandatory, non-refundable.
 
-No illegal activities or drugs.
+                  No illegal activities or drugs.
 
-We are not responsible for interactions or belongings.
+                  We are not responsible for interactions or belongings.
 
-Maintain respectful behavior.
+                  Maintain respectful behavior.
 
-Entry is at host discretion.
+                  Entry is at host discretion.
 
-By registering, you agree to all terms.`}
+                  By registering, you agree to all terms.`}
             </p>
 
             <button
