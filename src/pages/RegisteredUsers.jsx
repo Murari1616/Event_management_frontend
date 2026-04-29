@@ -18,7 +18,6 @@ export default function RegisteredUsers() {
 
       if (!res.ok) throw new Error();
 
-      // remove from UI instantly
       setUsers((prev) => prev.filter((u) => u._id !== id));
 
       toast({
@@ -38,6 +37,7 @@ export default function RegisteredUsers() {
   const fetchUsers = async () => {
     try {
       if (localStorage.getItem("code") !== "4110") return;
+
       const res = await fetch(`${BASE_URL}guest/getAll`, {
         method: "GET",
         headers: {
@@ -75,14 +75,17 @@ export default function RegisteredUsers() {
         🎟 Registered Users
       </h1>
 
-      <div className="overflow-x-auto">
-        <table className="w-full border border-gray-700 text-sm">
-          <thead className="bg-purple-700 text-white">
-            <tr className="justify-center">
+      {/* 📊 Table wrapper */}
+      <div className="overflow-x-auto w-full">
+        <table className="min-w-[900px] w-full border border-gray-700 text-sm">
+          {/* HEADER */}
+          <thead className="bg-purple-700 text-white sticky top-0 z-10">
+            <tr>
               <th className="p-3">Name</th>
               <th>Age</th>
               <th>Gender</th>
               <th>Phone</th>
+              <th>Instagram</th>
               <th>Place</th>
               <th>Talent</th>
               <th>Description</th>
@@ -90,6 +93,7 @@ export default function RegisteredUsers() {
             </tr>
           </thead>
 
+          {/* BODY */}
           <tbody>
             {users.map((u, index) => (
               <tr
@@ -100,12 +104,31 @@ export default function RegisteredUsers() {
                 <td className="text-center">{u.age}</td>
                 <td className="text-center">{u.gender}</td>
                 <td className="text-center">{u.phoneNumber}</td>
+
+                {/* Instagram */}
+                <td className="text-center text-purple-400">
+                  {u.instaId ? (
+                    <a
+                      href={`https://instagram.com/${u.instaId.replace("@", "")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline"
+                    >
+                      {u.instaId}
+                    </a>
+                  ) : (
+                    "-"
+                  )}
+                </td>
+
                 <td className="text-center">{u.place}</td>
                 <td className="text-center">{u.talent}</td>
+
                 <td className="text-center max-w-xs truncate">
                   {u.description || "-"}
                 </td>
-                <td>
+
+                <td className="text-center">
                   <button
                     onClick={() => handleDelete(u._id)}
                     className="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-xs"
