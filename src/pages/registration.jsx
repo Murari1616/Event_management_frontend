@@ -261,7 +261,7 @@ export default function EventRegistration() {
 
             <div className="border border-purple-700 rounded-xl p-4 text-center space-y-4 bg-black">
               <h2 className="text-lg font-semibold text-purple-400">
-                Complete Payment First 💫
+                Complete Payment for Registration 💫
               </h2>
 
               {/* 💰 Price */}
