@@ -32,7 +32,9 @@ export default function EventRegistration() {
   const [adminCode, setAdminCode] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [termsRead, setTermsRead] = useState(false);
-  const isClosed = false;
+
+  const EVENT_DEADLINE = "2026-05-02T17:00:00+05:30";
+  const [isClosed, setIsClosed] = useState(false);
 
   const {
     register,
@@ -94,7 +96,22 @@ export default function EventRegistration() {
 
   useEffect(() => {
     wake();
-  });
+  }, []);
+
+  useEffect(() => {
+    const checkIfClosed = () => {
+      const now = new Date();
+      const deadline = new Date(EVENT_DEADLINE);
+
+      setIsClosed(now > deadline);
+    };
+
+    checkIfClosed();
+
+    const interval = setInterval(checkIfClosed, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
   if (isClosed) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center text-white text-center">
@@ -261,7 +278,7 @@ export default function EventRegistration() {
 
             <div className="border border-purple-700 rounded-xl p-4 text-center space-y-4 bg-black">
               <h2 className="text-lg font-semibold text-purple-400">
-                Complete Payment for Registration 💫
+                Complete Payment First 💫
               </h2>
 
               {/* 💰 Price */}
