@@ -29,11 +29,11 @@ export default function EventRegistration() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [showAdminModal, setShowAdminModal] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [adminCode, setAdminCode] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [termsRead, setTermsRead] = useState(false);
-
-  const EVENT_DEADLINE = "2026-05-02T17:00:00+05:30";
+  const EVENT_DEADLINE = "2026-06-06T17:00:00+05:30";
   const [isClosed, setIsClosed] = useState(false);
 
   const {
@@ -88,10 +88,23 @@ export default function EventRegistration() {
   };
 
   const wake = async () => {
-    await fetch(`${testURL}/wake-up`, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    });
+    try {
+      setLoading(true);
+      const res = await fetch(`${testURL}/wake-up`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+      console.log("RES", res);
+      if (res.ok) {
+        setLoading(false);
+      }
+    } catch (err) {
+      toast({
+        title: "Error",
+        variant: "destructive",
+        description: err.message,
+      });
+    }
   };
 
   useEffect(() => {
@@ -163,22 +176,22 @@ export default function EventRegistration() {
             </p>
 
             <div className="grid grid-cols-2 gap-3 text-sm">
-              <p className="text-green-400">💰 Price: ₹899</p>
+              <p className="text-green-400">💰 Price: ₹399</p>
               {/* <p className="text-yellow-300">🍽️ ₹500 Redeemable Food</p> */}
               <p className="text-pink-400">🎁 Surprise Gift Included</p>
-              <p className="text-blue-400">📅 May 2, 2026</p>
+              <p className="text-blue-400">📅 June 6, 2026</p>
               <p className="text-purple-400">🕡 5:30 PM onwards</p>
               <a
-                href="https://maps.app.goo.gl/dsXE2q2Vgau3vrHfA"
+                href="https://maps.app.goo.gl/v4sx7MaTckXe8G5c9?g_st=ic"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[12px] text-red-400 underline"
               >
-                📍The Game Room Cafe, Gachibowli
+                📍The Aanati Cafe, Yousufguda
               </a>
 
               {/* ✅ NEW */}
-              <p className="text-orange-400">🎮 Gaming</p>
+              <p className="text-orange-400">🎲 Old School Games</p>
               <p className="text-cyan-400">🤝 Strangers Meet</p>
               <a
                 href="https://www.instagram.com/anaganaga.oka.parichayam?igsh=MWc1cnNneWFteWY5OA=="
@@ -282,7 +295,7 @@ export default function EventRegistration() {
               </h2>
 
               {/* 💰 Price */}
-              <p className="text-2xl font-bold text-green-400">₹899</p>
+              <p className="text-2xl font-bold text-green-400">₹399</p>
 
               <div className="flex justify-center">
                 <img
@@ -357,10 +370,60 @@ export default function EventRegistration() {
 
             {/* Submit */}
             <button
-              disabled={!agree || !paid || isSubmitting}
+              disabled={isSubmitting || loading}
               className="w-full py-3 rounded-lg bg-gradient-to-r from-purple-600 to-pink-500 font-semibold disabled:opacity-50"
             >
-              {isSubmitting ? "Entering..." : "Reserve Your Spot"}
+              {loading ? (
+                <>
+                  <div className="flex gap-4 justify-center">
+                    <svg
+                      className="animate-spin h-5 w-5 text-white border-2 border-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                      />
+                    </svg>
+                    <span>🤗 Hang Tight! Saving Your Cozy Spot</span>
+                    <svg
+                      className="animate-spin h-5 w-5 text-white border-2 border-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                      />
+                    </svg>
+                  </div>
+                </>
+              ) : isSubmitting ? (
+                "Entering..."
+              ) : (
+                "Reserve Your Spot"
+              )}
             </button>
           </form>
         </div>
