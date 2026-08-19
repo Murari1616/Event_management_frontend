@@ -4,7 +4,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as Checkbox from "@radix-ui/react-checkbox";
 import { CheckIcon, Info } from "lucide-react";
-import AOP from "../assets/images/AOP.jpeg";
+import MoM from "../assets/images/MoM.jpeg";
 import { BASE_URL, testURL } from "@/appConstants";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -13,7 +13,7 @@ import QR from "../assets/images/payment.jpeg";
 const schema = z.object({
   name: z.string().min(2),
   age: z.coerce.number().min(1),
-  gender: z.enum(["King", "Queen"]),
+  gender: z.enum(["King", "Queen","Couple"]),
   phoneNumber: z.string().min(10),
   instaId: z.string().min(2, "Instagram ID is required"),
   place: z.string().min(2),
@@ -33,7 +33,7 @@ export default function EventRegistration() {
   const [adminCode, setAdminCode] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [termsRead, setTermsRead] = useState(false);
-  const EVENT_DEADLINE = "2026-06-06T17:00:00+05:30";
+  const EVENT_DEADLINE = "2026-08-23T17:00:00+05:30";
   const [isClosed, setIsClosed] = useState(false);
 
   const {
@@ -47,6 +47,15 @@ export default function EventRegistration() {
   const agree = watch("agree");
   const paid = watch("paid");
   const SECRET_CODE = "4110";
+  const selectedGender = watch("gender");
+
+const genderPrices = {
+  King: 199,
+  Queen: 99,
+  Couple:399
+};
+
+const selectedPrice = genderPrices[selectedGender];
 
   const handleVerify = () => {
     if (adminCode === SECRET_CODE) {
@@ -61,7 +70,6 @@ export default function EventRegistration() {
     }
   };
 
-  const selectedGender = watch("gender");
   const onSubmit = async (data) => {
     const { agree, paid, ...payload } = data;
     console.log("object", payload);
@@ -145,7 +153,7 @@ export default function EventRegistration() {
       <div className="max-w-3xl w-full rounded-2xl overflow-hidden shadow-2xl bg-[#0f0f0f] border border-purple-700">
         {/* 🎬 Hero Section */}
         <div className="relative h-64 z-10">
-          <img src={AOP} className="w-full h-full object-cover opacity-70" />
+          <img src={MoM} className="w-full h-full object-cover opacity-70" />
           <button
             onClick={() => {
               setShowAdminModal(true);
@@ -159,7 +167,7 @@ export default function EventRegistration() {
 
           <div className="absolute bottom-4 left-6">
             <h1 className="text-2xl md:text-3xl font-bold tracking-wide">
-              Anaganaga Oka Parichayam
+              Modhati Malupu
             </h1>
             <p className="text-sm text-purple-300">
               No Boundaries. No Filters.
@@ -176,35 +184,50 @@ export default function EventRegistration() {
             </p>
 
             <div className="grid grid-cols-2 gap-3 text-sm">
-              <p className="text-green-400">💰 Price: ₹399</p>
-              {/* <p className="text-yellow-300">🍽️ ₹500 Redeemable Food</p> */}
-              <p className="text-pink-400">🎁 Surprise Gift Included</p>
-              <p className="text-blue-400">📅 June 6, 2026</p>
-              <p className="text-purple-400">🕡 5:30 PM onwards</p>
-              <a
-                href="https://maps.app.goo.gl/v4sx7MaTckXe8G5c9?g_st=ic"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[12px] text-red-400 underline"
-              >
-                📍The Aanati Cafe, Yousufguda
-              </a>
+  <div className="text-green-400">
+    💰 <span className="font-semibold">Couple:</span> ₹299
+  </div>
 
-              {/* ✅ NEW */}
-              <p className="text-orange-400">🎲 Old School Games</p>
-              <p className="text-cyan-400">🤝 Strangers Meet</p>
-              <a
-                href="https://www.instagram.com/anaganaga.oka.parichayam?igsh=MWc1cnNneWFteWY5OA=="
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-purple-400 text-xs flex flex-row gap-2"
-              >
-                Follow{" "}
-                <p className="text-purple-400 underline">
-                  @anaganaga.oka.parichayam
-                </p>
-              </a>
-            </div>
+  <div className="text-pink-400">
+    👩 <span className="font-semibold">Women:</span> ₹99
+  </div>
+
+  <div className="text-blue-400">
+    👨 <span className="font-semibold">Men:</span> ₹199
+  </div>
+
+  {/* <p className="text-pink-400">🎁 Surprise Gift Included</p> */}
+
+  <p className="text-blue-400">📅 Aug 23, 2026</p>
+
+  <p className="text-purple-400">🕡 6PM - 7:30PM</p>
+
+  <a
+    href="https://maps.app.goo.gl/WCSEKB2c48YZygkx8?g_st=aw"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-[12px] text-red-400 underline"
+  >
+    🛕Sri Venkateshwara Swamy Temple, Kakatiya Hills
+  </a>
+
+  {/* <p className="text-orange-400">🎲 Old School Games</p> */}
+
+  <p className="text-cyan-400">🤝 Strangers Meet</p>
+
+  <a
+    href="https://www.instagram.com/modhati.malupu?igsi=MmpnaHNlNWU0dnow&utm_source=qr"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-purple-400 text-xs flex flex-row gap-2"
+  >
+    Follow{" "}
+    <p className="text-purple-400 underline">
+      @modhati.malupu
+    </p>
+  </a>
+</div>
+
           </div>
 
           {/* 🧾 Form */}
@@ -230,7 +253,7 @@ export default function EventRegistration() {
             <div>
               <label className="label">Gender?</label>
               <div className="flex gap-4 mt-2">
-                {["King", "Queen"].map((g) => (
+                {["King", "Queen","Couple"].map((g) => (
                   <label
                     key={g}
                     className={`px-4 py-2 border rounded-full cursor-pointer transition 
@@ -295,7 +318,10 @@ export default function EventRegistration() {
               </h2>
 
               {/* 💰 Price */}
-              <p className="text-2xl font-bold text-green-400">₹399</p>
+              {/* <p className="text-2xl font-bold text-green-400">₹399</p> */}
+              <p className="text-2xl font-bold text-green-400">
+  {selectedPrice ? `₹${selectedPrice}` : "Select Gender"}
+</p>
 
               <div className="flex justify-center">
                 <img
