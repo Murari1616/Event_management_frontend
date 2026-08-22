@@ -33,7 +33,7 @@ export default function EventRegistration() {
   const [adminCode, setAdminCode] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [termsRead, setTermsRead] = useState(false);
-  const EVENT_DEADLINE = "2026-08-23T17:00:00+05:30";
+  const EVENT_DEADLINE = "2026-08-29T17:00:00+05:30";
   const [isClosed, setIsClosed] = useState(false);
 
   const {
