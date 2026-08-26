@@ -278,7 +278,7 @@ export default function EventRegistration() {
 
             <div className="grid grid-cols-2 gap-3 text-sm">
               <div className="text-green-400">
-                💰 <span className="font-semibold">Couple:</span> ₹299
+                💰 <span className="font-semibold">2 ppl:</span> ₹299
               </div>
 
               <div className="text-pink-400">
@@ -291,7 +291,7 @@ export default function EventRegistration() {
 
               {/* <p className="text-pink-400">🎁 Surprise Gift Included</p> */}
 
-              <p className="text-blue-400">📅 Aug 23, 2026</p>
+              <p className="text-blue-400">📅 Aug 29, 2026</p>
 
               <p className="text-purple-400">🕡 6PM - 7:30PM</p>
 
