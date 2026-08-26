@@ -13,7 +13,7 @@ import QR from "../assets/images/payment.jpeg";
 const schema = z.object({
   name: z.string().min(2),
   age: z.coerce.number().min(1),
-  gender: z.enum(["King", "Queen","Couple"]),
+  gender: z.enum(["King", "Queen", "Couple"]),
   phoneNumber: z.string().min(10),
   instaId: z.string().min(2, "Instagram ID is required"),
   place: z.string().min(2),
@@ -30,11 +30,14 @@ export default function EventRegistration() {
   const { toast } = useToast();
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [users, setUsers] = useState([]);
   const [adminCode, setAdminCode] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [termsRead, setTermsRead] = useState(false);
   const EVENT_DEADLINE = "2026-08-29T17:00:00+05:30";
   const [isClosed, setIsClosed] = useState(false);
+
+  const paidUsersCount = users.filter((user) => user.approve === true).length;
 
   const {
     register,
@@ -49,13 +52,13 @@ export default function EventRegistration() {
   const SECRET_CODE = "4110";
   const selectedGender = watch("gender");
 
-const genderPrices = {
-  King: 199,
-  Queen: 99,
-  Couple:399
-};
+  const genderPrices = {
+    King: 199,
+    Queen: 99,
+    Couple: 399
+  };
 
-const selectedPrice = genderPrices[selectedGender];
+  const selectedPrice = genderPrices[selectedGender];
 
   const handleVerify = () => {
     if (adminCode === SECRET_CODE) {
@@ -114,9 +117,38 @@ const selectedPrice = genderPrices[selectedGender];
       });
     }
   };
+  const fetchUsers = async () => {
+    try {
+      if (localStorage.getItem("code") !== "4110") return;
+
+      const res = await fetch(`${BASE_URL}guest/getAll`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error();
+
+      setUsers(data.data || []);
+    } catch (err) {
+      console.log("ERR", err)
+      toast({
+        title: "Error",
+        variant: "destructive",
+        description: "Failed to fetch users",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   useEffect(() => {
     wake();
+    fetchUsers();
   }, []);
 
   useEffect(() => {
@@ -133,20 +165,64 @@ const selectedPrice = genderPrices[selectedGender];
     return () => clearInterval(interval);
   }, []);
 
-  if (isClosed) {
+
+  if (isClosed || paidUsersCount === 10) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center text-white text-center">
-        <div>
-          <h1 className="text-4xl font-bold text-purple-400">
+      <div className="min-h-screen bg-black flex items-center justify-center text-white text-center relative">
+        {/* Admin Info Button */}
+        <button
+          onClick={() => setShowAdminModal(true)}
+          className="absolute top-4 right-4 bg-black/70 border border-purple-600 p-3 rounded-full hover:bg-purple-900 transition z-50"
+        >
+          <Info className="text-white w-5 h-5" />
+        </button>
+
+        <div className="px-6">
+          <h1 className="text-4xl font-bold text-purple-400 mb-4">
             Event is Officially Closed
           </h1>
+
           <p className="text-gray-400 text-xl">
             Tickets are sold out. Thank you for your interest 🙏
           </p>
         </div>
+
+        {/* Admin Modal */}
+        {showAdminModal && (
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[100]">
+            <div className="bg-[#1a1a1a] p-6 rounded-lg w-80 space-y-4 text-left">
+              <h2 className="text-purple-400 text-lg font-bold">
+                Admin Access
+              </h2>
+
+              <input
+                type="password"
+                placeholder="Enter code"
+                value={adminCode}
+                onChange={(e) => setAdminCode(e.target.value)}
+                className="w-full p-2 rounded bg-black border border-gray-600 text-white"
+              />
+
+              <button
+                onClick={handleVerify}
+                className="w-full bg-purple-600 py-2 rounded"
+              >
+                Unlock
+              </button>
+
+              <button
+                onClick={() => setShowAdminModal(false)}
+                className="text-sm text-gray-400 w-full"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
+
 
   return (
     <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
@@ -179,54 +255,71 @@ const selectedPrice = genderPrices[selectedGender];
         <div className="p-6 space-y-6">
           {/* 🌟 Description */}
           <div className="space-y-2 text-sm text-gray-300 leading-relaxed">
-            <p className="italic text-purple-300">
-              Just You, Your Soul and Your Inner Child ✨
-            </p>
+            <div className="flex justify-between">
+
+              <p className="italic text-purple-300">
+                Just You, Your Soul and Your Inner Child ✨
+              </p>
+              <div className="flex items-center justify-center gap-2 text-red-400">
+                <span className="text-sm italic">
+                  Only
+                </span>
+
+                <span className="text-xl font-bold text-red-500">
+                  {10 - paidUsersCount}
+                </span>
+
+                <span className="text-sm italic">
+                  seats left — hurry up!
+                </span>
+              </div>
+
+            </div>
 
             <div className="grid grid-cols-2 gap-3 text-sm">
-  <div className="text-green-400">
-    💰 <span className="font-semibold">Couple:</span> ₹299
-  </div>
+              <div className="text-green-400">
+                💰 <span className="font-semibold">Couple:</span> ₹299
+              </div>
 
-  <div className="text-pink-400">
-    👩 <span className="font-semibold">Women:</span> ₹99
-  </div>
+              <div className="text-pink-400">
+                👩 <span className="font-semibold">Women:</span> ₹99
+              </div>
 
-  <div className="text-blue-400">
-    👨 <span className="font-semibold">Men:</span> ₹199
-  </div>
+              <div className="text-blue-400">
+                👨 <span className="font-semibold">Men:</span> ₹199
+              </div>
 
-  {/* <p className="text-pink-400">🎁 Surprise Gift Included</p> */}
+              {/* <p className="text-pink-400">🎁 Surprise Gift Included</p> */}
 
-  <p className="text-blue-400">📅 Aug 29, 2026</p>
+              <p className="text-blue-400">📅 Aug 23, 2026</p>
 
-  <p className="text-purple-400">🕡 6PM - 7:30PM</p>
+              <p className="text-purple-400">🕡 6PM - 7:30PM</p>
 
-  <a
-    href="https://maps.app.goo.gl/WCSEKB2c48YZygkx8?g_st=aw"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="text-[12px] text-red-400 underline"
-  >
-    🛕Sri Venkateshwara Swamy Temple, Kakatiya Hills
-  </a>
+              <a
+                href="https://maps.app.goo.gl/WCSEKB2c48YZygkx8?g_st=aw"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[12px] text-red-400 underline"
+              >
+                🛕Sri Venkateshwara Swamy Temple, Kakatiya Hills
+              </a>
 
-  {/* <p className="text-orange-400">🎲 Old School Games</p> */}
+              {/* <p className="text-orange-400">🎲 Old School Games</p> */}
 
-  <p className="text-cyan-400">🤝 Strangers Meet</p>
+              <p className="text-cyan-400">🤝 Strangers Meet</p>
 
-  <a
-    href="https://www.instagram.com/modhati.malupu?igsi=MmpnaHNlNWU0dnow&utm_source=qr"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="text-purple-400 text-xs flex flex-row gap-2"
-  >
-    Follow{" "}
-    <p className="text-purple-400 underline">
-      @modhati.malupu
-    </p>
-  </a>
-</div>
+              <a
+                href="https://www.instagram.com/modhati.malupu?igsi=MmpnaHNlNWU0dnow&utm_source=qr"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-purple-400 text-xs flex flex-row gap-2"
+              >
+                Follow{" "}
+                <p className="text-purple-400 underline">
+                  @modhati.malupu
+                </p>
+              </a>
+            </div>
 
           </div>
 
@@ -253,15 +346,14 @@ const selectedPrice = genderPrices[selectedGender];
             <div>
               <label className="label">Gender?</label>
               <div className="flex gap-4 mt-2">
-                {["King", "Queen","Couple"].map((g) => (
+                {["King", "Queen", "Couple"].map((g) => (
                   <label
                     key={g}
                     className={`px-4 py-2 border rounded-full cursor-pointer transition 
-        ${
-          selectedGender === g
-            ? "bg-purple-600 border-purple-600 text-white"
-            : "border-purple-500 text-gray-300 hover:bg-purple-800"
-        }`}
+        ${selectedGender === g
+                        ? "bg-purple-600 border-purple-600 text-white"
+                        : "border-purple-500 text-gray-300 hover:bg-purple-800"
+                      }`}
                   >
                     <input
                       type="radio"
@@ -320,8 +412,8 @@ const selectedPrice = genderPrices[selectedGender];
               {/* 💰 Price */}
               {/* <p className="text-2xl font-bold text-green-400">₹399</p> */}
               <p className="text-2xl font-bold text-green-400">
-  {selectedPrice ? `₹${selectedPrice}` : "Select Gender"}
-</p>
+                {selectedPrice ? `₹${selectedPrice}` : "Select Gender"}
+              </p>
 
               <div className="flex justify-center">
                 <img
