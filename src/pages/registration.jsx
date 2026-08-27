@@ -166,7 +166,7 @@ export default function EventRegistration() {
   }, []);
 
 
-  if (isClosed || paidUsersCount === 10) {
+  if (isClosed || paidUsersCount >= 10) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center text-white text-center relative">
         {/* Admin Info Button */}
