@@ -13,17 +13,16 @@ import {
 import Layout from "./Layout.jsx";
 import NotFound from "./components/NotFound";
 import store from "./redux/store.jsx";
-import { Register } from "./lazyComponents.js";
+import { EventsManagement, Register, RegisteredUsers } from "./lazyComponents.js";
 import Loader from "./components/Loader/Loader.jsx";
 import { Toaster } from "./components/ui/toaster";
 import Location from "./pages/auth/Location";
 import PaymentPopup from "./pages/rent/Payment";
-import RegisteredUsers from "./pages/RegisteredUsers";
 import PaymentScreen from "./pages/Payment";
 
 // ✅ Define all routes
 const ProtectedRoute = ({ children }) => {
-  const isAdmin = localStorage.getItem("code") === "4110";
+  const isAdmin = localStorage.getItem("code") === "sri.laxmi#4110";
 
   if (!isAdmin) {
     return <Navigate to="/" replace />;
@@ -47,6 +46,16 @@ const router = createBrowserRouter([
       <Suspense fallback={<Loader />}>
         <ProtectedRoute>
           <RegisteredUsers />
+        </ProtectedRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/events",
+    element: (
+      <Suspense fallback={<Loader />}>
+        <ProtectedRoute>
+          <EventsManagement />
         </ProtectedRoute>
       </Suspense>
     ),

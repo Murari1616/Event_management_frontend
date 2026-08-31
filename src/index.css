@@ -189,3 +189,27 @@ table tr:last-child td:last-child {
 .animate-shake {
   animation: shake 1s ease-in-out;
 }
+
+.custom-horizontal-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #6b21a8 #181818;
+}
+
+.custom-horizontal-scroll::-webkit-scrollbar {
+  height: 10px;
+}
+
+.custom-horizontal-scroll::-webkit-scrollbar-track {
+  background: #181818;
+  border-radius: 10px;
+  margin: 0 4px;
+}
+
+.custom-horizontal-scroll::-webkit-scrollbar-thumb {
+  background: #6b21a8;
+  border-radius: 10px;
+}
+
+.custom-horizontal-scroll::-webkit-scrollbar-thumb:hover {
+  background: #9333ea;
+}
