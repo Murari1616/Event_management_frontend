@@ -11,6 +11,7 @@ import { BASE_URL, testURL } from "@/appConstants";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useRazorpay } from "react-razorpay";
+import AdminModal from "./AdminAccessModel";
 
 const schema = z.object({
   name: z.string().min(2, "Name is required"),
@@ -58,15 +59,15 @@ export default function EventRegistration() {
 
   const { Razorpay } = useRazorpay();
 
-  const [showAdminModal, setShowAdminModal] =useState(false);
-  const [showModal, setShowModal] =useState(false);
-  const [adminCode, setAdminCode] =useState("");
-  const [loading, setLoading] =useState(false);
-  const [events, setEvents] =useState([]);
-  const [selectedEvent, setSelectedEvent] =useState(null);
-  const [eventsLoading, setEventsLoading] =useState(true);
-  const [users, setUsers] =useState([]);
-  const [isClosed, setIsClosed] =useState(false);
+  const [showAdminModal, setShowAdminModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [adminCode, setAdminCode] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [events, setEvents] = useState([]);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [eventsLoading, setEventsLoading] = useState(true);
+  const [users, setUsers] = useState([]);
+  const [isClosed, setIsClosed] = useState(false);
 
   const {
     register,
@@ -583,6 +584,26 @@ export default function EventRegistration() {
   ) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center p-6">
+        <button
+          onClick={() =>
+            setShowAdminModal(true)
+          }
+          className="
+            absolute
+            top-4
+            right-4
+            bg-black/70
+            border
+            border-purple-600
+            p-3
+            rounded-full
+            hover:bg-purple-900
+            transition
+            z-50
+          "
+        >
+          <Info className="text-white w-5 h-5" />
+        </button>
         <div className="text-center">
           <div className="text-5xl mb-5">
             🎭
@@ -596,6 +617,14 @@ export default function EventRegistration() {
             Please check back later.
           </p>
         </div>
+        {showAdminModal && (
+          <AdminModal
+            adminCode={adminCode}
+            setAdminCode={setAdminCode}
+            handleVerify={handleVerify}
+            setShowAdminModal={setShowAdminModal}
+          />
+        )}
       </div>
     );
   }
@@ -717,33 +746,12 @@ export default function EventRegistration() {
         {/* ADMIN MODAL */}
 
         {showAdminModal && (
-          <div className="fixed inset-0 bg-black/70 flex items-center justify-center">
-            <div className="bg-[#1a1a1a] p-6 rounded-lg w-80 space-y-4">
-              <h2 className="text-purple-400 text-lg font-bold">Admin Access</h2>
-
-              <input
-                type="password"
-                placeholder="Enter code"
-                value={adminCode}
-                onChange={(e) => setAdminCode(e.target.value)}
-                className="w-full p-2 rounded bg-black border border-gray-600 text-white"
-              />
-
-              <button
-                onClick={handleVerify}
-                className="w-full bg-purple-600 py-2 rounded"
-              >
-                Unlock
-              </button>
-
-              <button
-                onClick={() => setShowAdminModal(false)}
-                className="text-sm text-gray-400 w-full"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
+          <AdminModal
+            adminCode={adminCode}
+            setAdminCode={setAdminCode}
+            handleVerify={handleVerify}
+            setShowAdminModal={setShowAdminModal}
+          />
         )}
       </div>
     );
@@ -1320,7 +1328,7 @@ export default function EventRegistration() {
 
               <Checkbox.Root
                 checked={agree}
-                onCheckedChange={(val)=>
+                onCheckedChange={(val) =>
                   setValue(
                     "agree",
                     !!val,
