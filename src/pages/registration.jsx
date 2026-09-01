@@ -11,6 +11,7 @@ import { BASE_URL, testURL } from "@/appConstants";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useRazorpay } from "react-razorpay";
+import AdminModal from "./AdminAccessModel";
 
 const schema = z.object({
   name: z.string().min(2, "Name is required"),
@@ -58,15 +59,15 @@ export default function EventRegistration() {
 
   const { Razorpay } = useRazorpay();
 
-  const [showAdminModal, setShowAdminModal] =useState(false);
-  const [showModal, setShowModal] =useState(false);
-  const [adminCode, setAdminCode] =useState("");
-  const [loading, setLoading] =useState(false);
-  const [events, setEvents] =useState([]);
-  const [selectedEvent, setSelectedEvent] =useState(null);
-  const [eventsLoading, setEventsLoading] =useState(true);
-  const [users, setUsers] =useState([]);
-  const [isClosed, setIsClosed] =useState(false);
+  const [showAdminModal, setShowAdminModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [adminCode, setAdminCode] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [events, setEvents] = useState([]);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [eventsLoading, setEventsLoading] = useState(true);
+  const [users, setUsers] = useState([]);
+  const [isClosed, setIsClosed] = useState(false);
 
   const {
     register,
@@ -583,19 +584,44 @@ export default function EventRegistration() {
   ) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center p-6">
-        <div className="text-center">
-          <div className="text-5xl mb-5">
-            🎭
-          </div>
-
+        <button
+          onClick={() =>
+            setShowAdminModal(true)
+          }
+          className="
+            absolute
+            top-4
+            right-4
+            bg-black/70
+            border
+            border-purple-600
+            p-3
+            rounded-full
+            hover:bg-purple-900
+            transition
+            z-50
+          "
+        >
+          <Info className="text-white w-5 h-5" />
+        </button>
+        <div className="text-center"> <div className="text-5xl mb-5"> 🎭 </div>
           <h1 className="text-3xl font-bold text-purple-400">
-            No Events Available
-          </h1>
+            No Events Available Right Now </h1>
+          <p className="text-gray-400 mt-3 max-w-md mx-auto leading-relaxed">
+            There are no events available at the moment. We’re working on bringing you exciting new events,
+            and all the details will be shared here shortly. </p>
+          <p className="text-purple-300 text-sm mt-4">
+            💜 Stay tuned — something exciting is coming your way!
+          </p> </div>
 
-          <p className="text-gray-400 mt-3">
-            Please check back later.
-          </p>
-        </div>
+        {showAdminModal && (
+          <AdminModal
+            adminCode={adminCode}
+            setAdminCode={setAdminCode}
+            handleVerify={handleVerify}
+            setShowAdminModal={setShowAdminModal}
+          />
+        )}
       </div>
     );
   }
@@ -609,15 +635,31 @@ export default function EventRegistration() {
     !selectedEvent
   ) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin w-10 h-10 border-4 border-purple-500 border-t-transparent rounded-full mx-auto mb-4" />
+      <div className="min-h-screen bg-black text-white flex items-center justify-center px-6"> <div className="text-center max-w-lg">
+        <div className="animate-spin w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full mx-auto mb-6" />
 
-          <p className="text-gray-400">
-            Loading events...
-          </p>
+        <h2 className="text-2xl font-bold text-purple-400 mb-3">
+          🎟️ We’re Getting Your Events Ready!
+        </h2>
+
+        <p className="text-gray-300 text-base leading-relaxed">
+          We’re a new event platform, and our servers sometimes need a
+          moment to wake up. ☕
+        </p>
+
+        <p className="text-gray-400 text-sm leading-relaxed mt-3">
+          Please hang tight while we load the latest events and seat
+          availability.
+        </p>
+
+        <div className="mt-5 px-4 py-3 rounded-lg bg-purple-950/40 border border-purple-900/50">
+          <p className="text-purple-300 text-sm leading-relaxed"> 💜 If an event happens to be full, don’t worry! This is just the beginning. We’ll be bringing you many more exciting events, and we hope to see you at one of them soon! ✨ </p>
         </div>
-      </div>
+
+        <p className="text-gray-400 text-sm mt-5">
+          Thanks for your patience!
+        </p>
+      </div></div>
     );
   }
 
@@ -640,23 +682,23 @@ export default function EventRegistration() {
             setShowAdminModal(true)
           }
           className="
-            absolute
-            top-4
-            right-4
-            bg-black/70
-            border
-            border-purple-600
-            p-3
-            rounded-full
-            hover:bg-purple-900
-            transition
-            z-50
-          "
+      absolute
+      top-4
+      right-4
+      bg-black/70
+      border
+      border-purple-600
+      p-3
+      rounded-full
+      hover:bg-purple-900
+      transition
+      z-50
+    "
         >
           <Info className="text-white w-5 h-5" />
         </button>
 
-        <div className="w-full ">
+        <div className="w-full">
 
           {/* EVENT SELECTOR */}
 
@@ -666,17 +708,17 @@ export default function EventRegistration() {
                 value={selectedEvent?._id || ""}
                 onChange={(e) => handleEventChange(e.target.value)}
                 className="
-                  w-full
-                  max-w-sm
-                  md:w-72
-                  p-3
-                  rounded-lg
-                  bg-[#1a1a1a]
-                  border
-                  border-purple-700
-                  text-white
-                  outline-none
-                "
+            w-full
+            max-w-sm
+            md:w-72
+            p-3
+            rounded-lg
+            bg-[#1a1a1a]
+            border
+            border-purple-700
+            text-white
+            outline-none
+          "
               >
                 {events.map((event) => (
                   <option key={event._id} value={event._id}>
@@ -687,65 +729,51 @@ export default function EventRegistration() {
             </div>
           )}
 
-
-          <div className="px-6">
+          <div className="px-6 max-w-2xl mx-auto">
 
             <div className="text-5xl mb-5">
-              {soldOut
-                ? "🎉"
-                : "⏰"}
+              {soldOut ? "🎉" : "⏰"}
             </div>
 
             <h1 className="text-4xl font-bold text-purple-400 mb-4">
               {soldOut
-                ? "Event is Sold Out"
+                ? "This Event is Currently Full"
                 : "Registration is Closed"}
             </h1>
 
-            <p className="text-gray-400 text-xl">
+            <p className="text-gray-400 text-lg leading-relaxed">
               {soldOut
-                ? "Tickets are sold out. Thank you for your interest 🙏"
-                : "Registration deadline has passed. Thank you for your interest 🙏"}
+                ? "Registrations for this event have reached capacity. Thank you so much for your interest! 🙏"
+                : "The registration window for this event has now closed. Thank you for your interest! 🙏"}
             </p>
 
-            <p className="text-purple-300 mt-5">
-              {selectedEvent.eventName}
+            <div className="mt-6 px-5 py-4 rounded-lg bg-purple-950/40 border border-purple-900/50">
+              <p className="text-purple-300 text-sm leading-relaxed">
+                💜 Don’t worry if you couldn’t join this one. We’ll be
+                organising many more exciting events in the future, and
+                we’d love to have you be a part of them!
+              </p>
+            </div>
+
+            <p className="text-purple-300 mt-5 font-medium">
+              🎭 {selectedEvent.eventName}
             </p>
+
           </div>
         </div>
 
         {/* ADMIN MODAL */}
 
         {showAdminModal && (
-          <div className="fixed inset-0 bg-black/70 flex items-center justify-center">
-            <div className="bg-[#1a1a1a] p-6 rounded-lg w-80 space-y-4">
-              <h2 className="text-purple-400 text-lg font-bold">Admin Access</h2>
-
-              <input
-                type="password"
-                placeholder="Enter code"
-                value={adminCode}
-                onChange={(e) => setAdminCode(e.target.value)}
-                className="w-full p-2 rounded bg-black border border-gray-600 text-white"
-              />
-
-              <button
-                onClick={handleVerify}
-                className="w-full bg-purple-600 py-2 rounded"
-              >
-                Unlock
-              </button>
-
-              <button
-                onClick={() => setShowAdminModal(false)}
-                className="text-sm text-gray-400 w-full"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
+          <AdminModal
+            adminCode={adminCode}
+            setAdminCode={setAdminCode}
+            handleVerify={handleVerify}
+            setShowAdminModal={setShowAdminModal}
+          />
         )}
       </div>
+
     );
   }
 
@@ -1320,7 +1348,7 @@ export default function EventRegistration() {
 
               <Checkbox.Root
                 checked={agree}
-                onCheckedChange={(val)=>
+                onCheckedChange={(val) =>
                   setValue(
                     "agree",
                     !!val,
