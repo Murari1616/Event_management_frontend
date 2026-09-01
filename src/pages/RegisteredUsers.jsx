@@ -5,10 +5,14 @@ import * as Checkbox from "@radix-ui/react-checkbox";
 import { CheckIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import UserDetailsModal from "./GuestDetailsModel";
+import Loader from "@/components/Loader/Loader";
 
 export default function RegisteredUsers() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [detailsModalOpen, setDetailsModalOpen] = useState(false);
+  const [detailsUser, setDetailsUser] = useState(null);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -173,31 +177,42 @@ export default function RegisteredUsers() {
 
   if (loading) {
     return (
-      <div className="text-white flex justify-center items-center h-screen">
-        Loading users...
-      </div>
+      <Loader/>
     );
   }
 
   return (
     <div className="min-h-screen bg-black text-white p-6">
-      <div className="flex items-center gap-4 mb-8 w-full">
-        <h1 className="text-2xl font-bold text-purple-400">
-          🎟 Registered Users
-        </h1>
+      <div className="w-full mb-8">
+        <div className="flex flex-wrap items-center justify-between gap-4">
 
-        <span className="bg-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold">
-          💰 Paid Users: {paidUsersCount}
-        </span>
+          {/* Registered Users */}
+          <h1 className="text-2xl font-bold text-purple-400">
+            🎟 Registered Users
+          </h1>
 
-        <span className="bg-purple-700 text-white px-4 py-2 rounded-full text-sm font-semibold">
-          👥 Total Users: {users.length}
-        </span>
-        <div className="w-[60%] flex justify-end">
+          {/* New Event */}
+          <div className="order-2 md:order-3">
+            <Button onClick={() => navigate("/events")}>
+              + New Event
+            </Button>
+          </div>
 
-          <Button onClick={() => { navigate('/events') }}>+ New Event</Button>
+          {/* Stats */}
+          <div className="flex w-full gap-3 order-3 md:order-2 md:w-auto">
+            <span className="bg-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold text-center whitespace-nowrap">
+              💰 Paid Users: {paidUsersCount}
+            </span>
+
+            <span className="bg-purple-700 text-white px-4 py-2 rounded-full text-sm font-semibold text-center whitespace-nowrap">
+              👥 Total Users: {users.length}
+            </span>
+          </div>
+
+
         </div>
       </div>
+
 
 
       {Object.entries(groupedUsers).map(([date, eventGroups]) => {
@@ -224,20 +239,11 @@ export default function RegisteredUsers() {
               </span>
 
             </div>
+            {/* EVENT TABLES - VERTICAL */}
 
-            {/* ============================= */}
-            {/* EVENT TABLES - HORIZONTAL */}
-            {/* ============================= */}
+            <div className="w-full pb-6">
 
-            <div className="w-full overflow-x-auto pb-6 custom-horizontal-scroll">
-
-              <div
-                className={
-                  Object.keys(eventGroups).length === 1
-                    ? "w-full"
-                    : "flex flex-nowrap gap-6"
-                }
-              >
+              <div className="w-full">
 
                 {Object.entries(eventGroups).map(
                   ([eventName, eventUsers]) => {
@@ -248,14 +254,8 @@ export default function RegisteredUsers() {
                     return (
                       <div
                         key={eventName}
-                        className={
-                          singleEvent
-                            ? "w-full"
-                            : "w-[1250px] shrink-0"
-                        }
+                        className="w-full mb-6"
                       >
-
-                        {/* EVENT HEADER */}
 
                         <div className="flex items-center justify-between mb-3">
 
@@ -269,15 +269,10 @@ export default function RegisteredUsers() {
 
                         </div>
 
-                        {/* TABLE */}
-
                         <div className="w-full overflow-x-auto custom-table-scrollbar">
                           <table className="table-fixed min-w-[750px] w-full border border-gray-700 text-sm">
-
                             <thead className="bg-purple-700 text-white">
-
                               <tr>
-
                                 <th className="p-2 w-[110px]">Name</th>
                                 <th className="w-[50px]">Age</th>
                                 <th className="w-[75px]">Gender</th>
@@ -287,22 +282,18 @@ export default function RegisteredUsers() {
                                 <th className="w-[110px]">Talent</th>
                                 <th className="w-[160px]">Description</th>
                                 <th className="w-[110px] text-center">Action</th>
-
                               </tr>
-
                             </thead>
-
                             <tbody>
-
                               {eventUsers.map((u, index) => (
 
                                 <tr
                                   key={u._id || index}
                                   className="
-                        border-t
-                        border-gray-800
-                        hover:bg-gray-900
-                      "
+                                    border-t
+                                    border-gray-800
+                                    hover:bg-gray-900
+                                  "
                                 >
 
                                   {/* NAME */}
@@ -311,8 +302,17 @@ export default function RegisteredUsers() {
                                     className="p-3 text-center truncate"
                                     title={u.name || "-"}
                                   >
-                                    {u.name || "-"}
+                                    <button
+                                      onClick={() => {
+                                        setDetailsUser(u);
+                                        setDetailsModalOpen(true);
+                                      }}
+                                      className="text-purple-400 hover:text-purple-300 hover:underline font-semibold truncate"
+                                    >
+                                      {u.name || "-"}
+                                    </button>
                                   </td>
+
 
                                   {/* AGE */}
 
@@ -342,10 +342,10 @@ export default function RegisteredUsers() {
 
                                   <td
                                     className="
-                          text-center
-                          text-purple-400
-                          truncate
-                        "
+                                      text-center
+                                      text-purple-400
+                                      truncate
+                                    "
                                     title={u.instaId || "-"}
                                   >
 
@@ -405,13 +405,13 @@ export default function RegisteredUsers() {
                                           handleDelete(u._id)
                                         }
                                         className="
-                              bg-red-600
-                              hover:bg-red-700
-                              px-3
-                              py-1
-                              rounded
-                              text-xs
-                            "
+                                          bg-red-600
+                                          hover:bg-red-700
+                                          px-3
+                                          py-1
+                                          rounded
+                                          text-xs
+                                        "
                                       >
                                         Delete
                                       </button>
@@ -422,39 +422,27 @@ export default function RegisteredUsers() {
                                           handleApproveClick(u)
                                         }
                                         className="
-                              w-5
-                              h-5
-                              border
-                              border-gray-500
-                              rounded
-                              flex
-                              items-center
-                              justify-center
-                              data-[state=checked]:bg-green-600
-                              data-[state=checked]:border-green-600
-                            "
-                                      >
-
+                                            w-5
+                                            h-5
+                                            border
+                                            border-gray-500
+                                            rounded
+                                            flex
+                                            items-center
+                                            justify-center
+                                            data-[state=checked]:bg-green-600
+                                            data-[state=checked]:border-green-600">
                                         <Checkbox.Indicator>
                                           <CheckIcon className="text-white w-4 h-4" />
                                         </Checkbox.Indicator>
-
                                       </Checkbox.Root>
-
                                     </div>
-
                                   </td>
-
                                 </tr>
-
                               ))}
-
                             </tbody>
-
                           </table>
-
                         </div>
-
                       </div>
                     );
                   }
@@ -463,6 +451,8 @@ export default function RegisteredUsers() {
               </div>
 
             </div>
+
+
 
 
           </div>
@@ -508,6 +498,14 @@ export default function RegisteredUsers() {
           </div>
         </div>
       )}
+      <UserDetailsModal
+        open={detailsModalOpen}
+        user={detailsUser}
+        onClose={() => {
+          setDetailsModalOpen(false);
+          setDetailsUser(null);
+        }}
+      />
 
     </div>
   );
