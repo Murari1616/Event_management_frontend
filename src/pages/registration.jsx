@@ -604,7 +604,11 @@ export default function EventRegistration() {
         >
           <Info className="text-white w-5 h-5" />
         </button>
-        <div className="text-center"> <div className="text-5xl mb-5"> 🎭 </div>
+        <div className="text-center">
+          <div className="text-5xl mb-5">
+            🎭
+          </div>
+
           <h1 className="text-3xl font-bold text-purple-400">
             No Events Available Right Now </h1>
           <p className="text-gray-400 mt-3 max-w-md mx-auto leading-relaxed">
