@@ -854,7 +854,7 @@ export default function EventRegistration() {
         {/* HERO */}
         {/* ========================= */}
 
-        <div className="relative h-64 z-10">
+        <div className="relative h-64 z-1">
 
           <img
             src={MoM}
