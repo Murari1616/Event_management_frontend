@@ -2,7 +2,7 @@ import "./Loader.css";
 
 const Loader = () => {
   return (
-    <div className="w-full h-full flex flex-col justify-center items-center gap-5">
+    <div className="w-full min-h-[100vh] flex flex-col justify-center items-center gap-5 bg-black">
       <div className="loader">
         <div className="box box-1">
           <div className="side-left"></div>
