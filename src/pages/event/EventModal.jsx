@@ -396,6 +396,7 @@ export default function EventModal({
         items-center
         justify-center
         p-4
+        overflow-y-auto custom-horizontal-scroll
       "
     >
       <div
@@ -403,7 +404,7 @@ export default function EventModal({
           relative
           w-full
           max-w-2xl
-          max-h-[90vh]
+          max-h-[80vh]
           overflow-y-auto
           rounded-2xl
           bg-[#0f0f0f]
