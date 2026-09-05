@@ -1154,7 +1154,7 @@ export default function EventRegistration() {
                       className="hidden"
                     />
 
-                    {g}
+                    {g === "Couple" ? "2 People" : g}
                   </label>
                 ))}
 
