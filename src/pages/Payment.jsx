@@ -24,7 +24,7 @@ export default function PaymentScreen() {
           </p>
 
           <a
-            href="https://chat.whatsapp.com/JITtkasgtqFKbdAbHIWbNB"
+            href="https://chat.whatsapp.com/Bs8EGRzG60L3Cdf2uFJTro?s=cl&p=i&mlu=4&ilr=4"
             target="_blank"
             rel="noopener noreferrer"
             className="text-green-400 font-semibold underline"
