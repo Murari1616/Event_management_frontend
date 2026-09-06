@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
+import{ useEffect, useState } from "react";
 import { Plus } from "lucide-react";
 
 import { BASE_URL } from "@/appConstants";
 import { useToast } from "@/hooks/use-toast";
 
-import AddEventModal from "./EventModal";
 import EventTable from "./EventTable";
 import EventModal from "./EventModal";
+import { useNavigate } from "react-router-dom";
 
 export default function EventManagement() {
     const { toast } = useToast();
-
+    const navigate = useNavigate();
     const [events, setEvents] = useState([]);
     const [showEventModal, setShowEventModal] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState(null);
@@ -107,7 +107,7 @@ export default function EventManagement() {
     };
 
     const handleDelete = async (event) => {
-        console.log("EVENTS",event)
+        console.log("EVENTS", event)
         const confirmed = window.confirm(
             `Are you sure you want to delete "${event.eventName}"?`
         );
@@ -197,6 +197,28 @@ export default function EventManagement() {
 
                     {/* ADD EVENT */}
 
+                    <button
+                        onClick={() => navigate('/guestAdminRegistration')}
+                        className="
+                            flex
+                            items-center
+                            justify-center
+                            gap-2
+                            px-5
+                            py-3
+                            rounded-xl    
+                            bg-gradient-to-r
+                            from-blue-600
+                            to-green-500
+                            font-semibold
+                            hover:opacity-90
+                            transition
+                            "
+                    >
+                        <Plus className="w-5 h-5" />
+
+                        Add Guest
+                    </button>
                     <button
                         onClick={handleAdd}
                         className="
