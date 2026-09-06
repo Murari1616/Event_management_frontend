@@ -13,7 +13,7 @@ import {
 import Layout from "./Layout.jsx";
 import NotFound from "./components/NotFound";
 import store from "./redux/store.jsx";
-import { EventsManagement, Register, RegisteredUsers } from "./lazyComponents.js";
+import { EventsManagement, GuestAdminRegistration, Register, RegisteredUsers } from "./lazyComponents.js";
 import Loader from "./components/Loader/Loader.jsx";
 import { Toaster } from "./components/ui/toaster";
 import Location from "./pages/auth/Location";
@@ -56,6 +56,16 @@ const router = createBrowserRouter([
       <Suspense fallback={<Loader />}>
         <ProtectedRoute>
           <EventsManagement />
+        </ProtectedRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/guestAdminRegistration",
+    element: (
+      <Suspense fallback={<Loader />}>
+        <ProtectedRoute>
+          <GuestAdminRegistration />
         </ProtectedRoute>
       </Suspense>
     ),
