@@ -68,6 +68,7 @@ export default function EventRegistration() {
   const [eventsLoading, setEventsLoading] = useState(true);
   const [users, setUsers] = useState([]);
   const [isClosed, setIsClosed] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(50);
 
   const {
     register,
@@ -99,54 +100,52 @@ export default function EventRegistration() {
   const selectedPrice =
     genderPrices[selectedGender];
 
+
   const fetchEvents = async () => {
     try {
       setEventsLoading(true);
 
-      const res = await fetch(
-        `${BASE_URL}event/getAll`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const res = await fetch(`${BASE_URL}event/getAll`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       const result = await res.json();
 
       if (!res.ok) {
-        throw new Error(
-          result?.message ||
-          "Failed to fetch events"
-        );
+        throw new Error(result?.message || "Failed to fetch events");
       }
 
       const eventList = result.data || [];
 
-      setEvents(eventList);
-
-      // Select first event automatically
-      if (eventList.length > 0) {
-        setSelectedEvent(eventList[0]);
-      }
-    } catch (error) {
-      console.error(
-        "FETCH EVENTS ERROR:",
-        error
+      // Filter only active events
+      const activeEvents = eventList.filter(
+        (event) => event.active === true
       );
+      setEvents(activeEvents);
+
+      // Select first active event automatically
+      if (activeEvents.length > 0) {
+        setSelectedEvent(activeEvents[0]);
+      } else {
+        setSelectedEvent(null);
+      }
+
+    } catch (error) {
+      console.error("FETCH EVENTS ERROR:", error);
 
       toast({
         title: "Error",
         variant: "destructive",
-        description:
-          error.message ||
-          "Failed to fetch events",
+        description: error.message || "Failed to fetch events",
       });
     } finally {
       setEventsLoading(false);
     }
   };
+
 
   const fetchUsers = async () => {
     try {
@@ -231,6 +230,19 @@ export default function EventRegistration() {
     wake();
     fetchEvents();
     fetchUsers();
+    setTimeLeft(50);
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
   }, []);
 
 
@@ -639,31 +651,47 @@ export default function EventRegistration() {
     !selectedEvent
   ) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center px-6"> <div className="text-center max-w-lg">
-        <div className="animate-spin w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full mx-auto mb-6" />
+      <div className="min-h-screen bg-black text-white flex items-center justify-center px-6">
+        <div className="text-center max-w-lg">
+          <div className="animate-spin w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full mx-auto mb-6" />
 
-        <h2 className="text-2xl font-bold text-purple-400 mb-3">
-          🎟️ We’re Getting Your Events Ready!
-        </h2>
+          <h2 className="text-2xl font-bold text-purple-400 mb-3">
+            🎟️ We’re Getting Your Events Ready!
+          </h2>
 
-        <p className="text-gray-300 text-base leading-relaxed">
-          We’re a new event platform, and our servers sometimes need a
-          moment to wake up. ☕
-        </p>
+          <p className="text-gray-300 text-base leading-relaxed">
+            We’re a new event platform, and our servers sometimes need a
+            moment to wake up. ☕
+          </p>
 
-        <p className="text-gray-400 text-sm leading-relaxed mt-3">
-          Please hang tight while we load the latest events and seat
-          availability.
-        </p>
+          <p className="text-gray-400 text-sm leading-relaxed mt-3">
+            Please hang tight while we load the latest events and seat
+            availability.
+          </p>
 
-        <div className="mt-5 px-4 py-3 rounded-lg bg-purple-950/40 border border-purple-900/50">
-          <p className="text-purple-300 text-sm leading-relaxed"> 💜 If an event happens to be full, don’t worry! This is just the beginning. We’ll be bringing you many more exciting events, and we hope to see you at one of them soon! ✨ </p>
+          {/* Countdown Timer */}
+          <div className="mt-5">
+            <p className="text-purple-300 text-sm mb-2">
+              Time remaining
+            </p>
+            <div className="text-4xl font-bold text-purple-400 tabular-nums">
+              00:{String(timeLeft).padStart(2, "0")}
+            </div>
+          </div>
+
+          <div className="mt-5 px-4 py-3 rounded-lg bg-purple-950/40 border border-purple-900/50">
+            <p className="text-purple-300 text-sm leading-relaxed">
+              💜 If an event happens to be full, don’t worry! This is just
+              the beginning. We’ll be bringing you many more exciting
+              events, and we hope to see you at one of them soon! ✨
+            </p>
+          </div>
+
+          <p className="text-gray-400 text-sm mt-5">
+            Thanks for your patience!
+          </p>
         </div>
-
-        <p className="text-gray-400 text-sm mt-5">
-          Thanks for your patience!
-        </p>
-      </div></div>
+      </div>
     );
   }
 
